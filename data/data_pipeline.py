@@ -5,7 +5,7 @@ def clean_and_prep_data(raw_data_path):
     data = pd.read_csv(raw_data_path)
 
     # Select relevant columns
-    df = data[['title', 'authors', 'description', 'average_rating', 'categories', 'published_year', 'ratings_count' ]]
+    df = data[['title', 'authors', 'average_rating', 'categories', 'published_year', 'ratings_count' ]]
 
     # Handle missing values
     df = df.dropna(subset=['title'])
@@ -13,7 +13,6 @@ def clean_and_prep_data(raw_data_path):
     df['ratings_count'] = df['ratings_count'].fillna(0)
     df['authors'] = df['authors'].fillna("Unknown Author")
     df['categories'] = df['categories'].fillna("Uncategorized")
-    df['description'] = df['description'].fillna("No description available.")
 
     # Impute missing published years based on title
     missing_yrs = df[df['published_year'].isnull()]
@@ -41,7 +40,6 @@ def clean_and_prep_data(raw_data_path):
         "Title: " + df['title'] + ". " +
         "Author(s): " + df['authors'] + ". " +
         "Category: " + df['categories'] + ". " +
-        "Published: " + df['published_year'].astype(int).astype(str) + ". " +
-        "Summary: " + df['description']
+        "Published: " + df['published_year'].astype(int).astype(str) + ". " 
     )
     return df

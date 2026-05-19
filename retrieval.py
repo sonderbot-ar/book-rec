@@ -22,7 +22,7 @@ def get_recommendations(user_query, top_k=3):
     return final_recommendations 
 
 if __name__ == "__main__":
-    test_query = "I want a romance model that has a strong character development."
+    test_query = "I want a romance novel that has a strong character development."
     results = get_recommendations(test_query)
 
     for index, row in results.iterrows():
@@ -31,6 +31,5 @@ if __name__ == "__main__":
         print(f"Average Rating: {row['average_rating']}")
         print(f"Categories: {row['categories']}")
         print(f"Published Year: {row['published_year']}")
-        print(f"Description: {row['description'][:150]}...\n")
         print(f"Match Score: {row['similarity_score']:.4f}")
         print("-" * 40)
