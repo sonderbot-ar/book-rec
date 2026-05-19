@@ -1,4 +1,4 @@
-from data_pipeline import clean_and_prep_data
+from data.data_pipeline import clean_and_prep_data
 
 cleaned_df = clean_and_prep_data('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/data/books_DL.csv')
 
