@@ -21,7 +21,7 @@ def chat_with_rag(message, history):
         context_string += f"- TITLE: {row['title']} by {row['authors']}\n"
         context_string += f"  PLOT: {row['ai_context']}\n\n"
         
-    return ask_librarian(message, context_string)
+    return ask_librarian(message, context_string, history)
 
 demo = gr.ChatInterface(
     fn=chat_with_rag,

@@ -14,30 +14,74 @@ def get_top_matches(query_vector, doc_vectors, top_n=5):
     top_indices = np.argsort(similarities)[::-1][:top_n]
     return top_indices
 
-def ask_librarian(user_query, context_books):
+def ask_librarian(user_query, context_books, history=None):
+    if history is None:
+        history = []
+
     system_prompt = f"""
     You are a charming, highly intelligent librarian. 
-    A user has asked for a book recommendation: "{user_query}"
     
-    Here are the top 5 books from our database that match their request:
+    Here are the top 5 books from our database that match the user's latest request:
     {context_books}
     
-    Write a conversational, engaging response recommending 1 or 2 of these books. 
-    Explain exactly why they fit the user's request based ONLY on the provided descriptions.
+    Write a conversational, engaging response. Answer their question based ONLY on 
+    these provided descriptions and the context of your previous conversation.
     """
     
-    url = "http://localhost:11434/api/generate"
+    url = "http://localhost:11434/api/chat"
+
+    messages = [
+        {'role': 'system', 'content': system_prompt}
+    ]
+
+    for msg in history:
+        if isinstance(msg, dict):
+            content = msg.get("content", "")
+            
+            # If Gradio used the new OpenAI list format, extract just the text
+            if isinstance(content, list):
+                text_parts = [item["text"] for item in content if isinstance(item, dict) and "text" in item]
+                content = " ".join(text_parts)
+                
+            # Ensure it is a clean string before sending to Ollama
+            if isinstance(content, str) and content.strip():
+                messages.append({"role": msg.get("role", "user"), "content": content})
+                
+        # Fallback for the old Gradio List/Tuple format
+        elif isinstance(msg, (list, tuple)) and len(msg) == 2:
+            past_user, past_bot = msg
+            
+            # Only append if both parts are actual strings (ignoring file uploads)
+            if isinstance(past_user, str) and isinstance(past_bot, str):
+                messages.append({"role": "user", "content": past_user})
+                messages.append({"role": "assistant", "content": past_bot})
+
+    messages.append({'role': 'user', 'content': user_query})
+
     payload = {
         "model": "llama3.1",
-        "prompt": system_prompt,
+        "messages": messages,
         "stream": False # Set to True later if we want the "typing" effect
     }
+
+    print("\n--- DEBUG: SENDING PAYLOAD ---")
+    print(f"Total messages in conversation history: {len(messages)}")
     
-    response = requests.post(url, json=payload)
-    if response.status_code == 200:
-        return response.json()['response']
-    else:
-        return "Error: The Librarian is asleep."
+    try:
+        response = requests.post(url, json=payload)
+        
+        # TERMINAL INTERCEPT 2: Check exactly what Ollama sends back
+        print("\n--- DEBUG: OLLAMA RAW RESPONSE ---")
+        print(response.json())
+        
+        if response.status_code == 200:
+            return response.json()['message']['content']
+        return "The Library is currently closed (API Error)."
+    except Exception as e:
+        print(f"\n--- DEBUG: CRASH --- \n{e}")
+        return "Error: Cannot connect to Ollama."
+    
+
     
 def main():
     print("Loading the Library Database...")
