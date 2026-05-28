@@ -24,8 +24,19 @@ def ask_librarian(user_query, context_books, history=None):
     Here are the top 5 books from our database that match the user's latest request:
     {context_books}
     
-    Write a conversational, engaging response. Answer their question based ONLY on 
-    these provided descriptions and the context of your previous conversation.
+    Write a conversational, engaging response, but keep it breif. Answer their question based ONLY on 
+    these provided descriptions and the context of your previous conversation. 
+    Have your response in the following example strucutre:
+
+    'Brief conversation and description of what the user is looking for:
+    1. First Recommendation — Brief description.
+    2. Second Recommendation — Brief description.
+    3. Third Recommendation — Brief description. 
+
+    Conclusion based on recommendations. 
+    Follow up question.'
+
+
     """
     
     url = "http://localhost:11434/api/chat"
