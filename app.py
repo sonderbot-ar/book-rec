@@ -74,6 +74,42 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 wrap=True
             )
 
+            gr.Markdown("### 📖 Want to Read")
+            want_to_read_table = gr.Dataframe(
+                value=initial_table, 
+                headers=["Title", "Author"],
+                interactive=False,
+                wrap=True
+            )
+
+    def add_to_want_to_read(history_df, want_df, evt: gr.SelectData):
+        """Grabs the clicked row and safely appends it, neutralizing Gradio type-shifting."""
+        
+        if not isinstance(history_df, pd.DataFrame):
+            if isinstance(history_df, dict) and "data" in history_df:
+                history_df = pd.DataFrame(history_df["data"], columns=["Title", "Author"])
+            else:
+                history_df = pd.DataFrame(history_df, columns=["Title", "Author"])
+                
+        if not isinstance(want_df, pd.DataFrame):
+            if isinstance(want_df, dict) and "data" in want_df:
+                want_df = pd.DataFrame(want_df["data"], columns=["Title", "Author"])
+            else:
+                want_df = pd.DataFrame(want_df, columns=["Title", "Author"])
+
+        row_idx = evt.index[0]
+        selected_book = history_df.iloc[[row_idx]]
+        
+        if want_df is None or want_df.empty:
+            updated_want_df = selected_book
+        else:
+            updated_want_df = pd.concat([want_df, selected_book])
+            updated_want_df = updated_want_df.drop_duplicates(subset=['Title'])
+            
+        updated_want_df = updated_want_df.reset_index(drop=True)
+        
+        return updated_want_df
+
     def user_sends_message(user_msg, chat_history):
         """Instantly updates the chat UI using strict Gradio 5 dictionaries."""
         chat_history.append({"role": "user", "content": user_msg})
@@ -107,6 +143,11 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         inputs=[chatbot, book_table], 
         outputs=[chatbot, book_table] 
     ) 
+    book_table.select(
+        add_to_want_to_read,
+        inputs=[book_table, want_to_read_table],
+        outputs=[want_to_read_table]
+    )
 
 if __name__ == "__main__":
     demo.launch()
