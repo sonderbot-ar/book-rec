@@ -24,7 +24,7 @@ def ask_librarian(user_query, context_books, history=None):
     Here are the top 5 books from our database that match the user's latest request:
     {context_books}
     
-    Write a conversational, engaging response, but keep it breif. Answer their question based ONLY on 
+    Write a conversational, engaging response, but keep it brief. Answer their question based ONLY on 
     these provided descriptions and the context of your previous conversation. 
     Have your response in the following example strucutre:
 
@@ -96,13 +96,13 @@ def ask_librarian(user_query, context_books, history=None):
     
 def main():
     print("Loading the Library Database...")
-    df = pd.read_csv('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/data/enriched_books_for_rag.csv')
+    df = pd.read_csv('C:/Users/sudhi/Downloads/Book_Recommender_DeepLearning/book-rec/data/enriched_books_for_rag.csv')
     
     print("Loading the Vector Engine (bge-small)...")
     model = SentenceTransformer('BAAI/bge-small-en-v1.5')
     
     print("Loading the Vector Database (.npy)...")
-    book_vectors = np.load('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/embeddings/book_embeddings.npy')
+    book_vectors = np.load('C:/Users/sudhi/Downloads/Book_Recommender_DeepLearning/book-rec/embeddings/book_embeddings.npy')
     
     print("\n" + "="*50)
     print("📚 The AI Librarian is ready! (Type 'quit' to exit)")

@@ -33,7 +33,7 @@ def build_hybrid_context(row):
 
 
 def main():
-    df = pd.read_csv('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/data/enriched_books_from_dump.csv')
+    df = pd.read_csv('C:/Users/sudhi/Downloads/Book_Recommender_DeepLearning/book-rec/data/enriched_books_from_dump.csv')
     df['ai_context'] = df.apply(build_hybrid_context, axis=1)
     model = SentenceTransformer('BAAI/bge-small-en-v1.5')
     embeddings = model.encode(df['ai_context'].tolist(), show_progress_bar=True)

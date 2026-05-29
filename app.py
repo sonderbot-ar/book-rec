@@ -2,12 +2,13 @@ import gradio as gr
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from starry_night_theme import STARRY_CSS, get_starry_theme
 
 from librarian_chat import *
 
-df = pd.read_csv('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/data/enriched_books_for_rag.csv')
+df = pd.read_csv('C:/Users/sudhi/Downloads/Book_Recommender_DeepLearning/book-rec/data/enriched_books_for_rag.csv')
 model = SentenceTransformer('BAAI/bge-small-en-v1.5')
-book_vectors = np.load('/Users/andresrodartee/Desktop/eada/Deep Learning/book-rec/embeddings/book_embeddings.npy')
+book_vectors = np.load('C:/Users/sudhi/Downloads/Book_Recommender_DeepLearning/book-rec/embeddings/book_embeddings.npy')
 
 
 def chat_with_rag(message, history, book_history_state):
@@ -55,7 +56,7 @@ def chat_with_rag(message, history, book_history_state):
 
 initial_table = pd.DataFrame(columns=["Title", "Author"])
 
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
+with gr.Blocks(theme=get_starry_theme(), css = STARRY_CSS) as demo:
     gr.Markdown("# 📚 The AI Librarian")
     
     
